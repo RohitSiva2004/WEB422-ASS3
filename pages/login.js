@@ -15,7 +15,6 @@ export default function Login() {
 
   useEffect(() => {
     console.log("Login component mounted");
-    console.log("API URL from env:", process.env.NEXT_PUBLIC_API_URL);
     
     const logs = JSON.parse(localStorage.getItem('login_logs') || '[]');
     if (logs.length > 0) {
@@ -71,7 +70,6 @@ export default function Login() {
     
     try {
       log(`Starting authentication for user: ${user}`);
-      log(`API URL: ${process.env.NEXT_PUBLIC_API_URL}`);
       
       const token = await authenticateUser(user, password);
       log("Authentication successful, token received");
