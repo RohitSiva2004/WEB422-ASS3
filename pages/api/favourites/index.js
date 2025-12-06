@@ -18,31 +18,35 @@ function verifyToken(token) {
 }
 
 export default async function handler(req, res) {
-  await connectDB();
+  try {
+    await connectDB();
 
-  if (req.method === 'GET') {
-    const token = getTokenFromRequest(req);
-    if (!token) {
-      return res.status(401).json({ message: 'No token provided' });
-    }
-
-    const decoded = verifyToken(token);
-    if (!decoded) {
-      return res.status(401).json({ message: 'Invalid token' });
-    }
-
-    try {
-      const user = await User.findById(decoded._id).exec();
-      if (!user) {
-        return res.status(422).json({ message: 'User not found' });
+    if (req.method === 'GET') {
+      const token = getTokenFromRequest(req);
+      if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
       }
-      return res.status(200).json(user.favourites);
-    } catch (err) {
-      return res.status(422).json({ message: `Unable to get favourites: ${err}` });
-    }
-  }
 
-  res.setHeader('Allow', ['GET']);
-  return res.status(405).json({ message: `Method ${req.method} not allowed` });
+      const decoded = verifyToken(token);
+      if (!decoded) {
+        return res.status(401).json({ message: 'Invalid token' });
+      }
+
+      try {
+        const user = await User.findById(decoded._id).exec();
+        if (!user) {
+          return res.status(422).json({ message: 'User not found' });
+        }
+        return res.status(200).json(user.favourites);
+      } catch (err) {
+        return res.status(422).json({ message: `Unable to get favourites: ${err}` });
+      }
+    }
+
+    res.setHeader('Allow', ['GET']);
+    return res.status(405).json({ message: `Method ${req.method} not allowed` });
+  } catch (err) {
+    return res.status(500).json({ message: 'Server error' });
+  }
 }
 
