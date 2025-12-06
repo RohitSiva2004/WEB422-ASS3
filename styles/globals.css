@@ -40,3 +40,7 @@ a {
     color-scheme: dark;
   }
 }
+
+.table-hover tbody tr:hover {
+  cursor: pointer;
+}
