@@ -9,7 +9,6 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     const { userName, password, password2 } = req.body;
 
-    // Register endpoint
     if (req.query.action === 'register') {
       if (password !== password2) {
         return res.status(422).json({ message: 'Passwords do not match' });
@@ -33,7 +32,6 @@ export default async function handler(req, res) {
       }
     }
 
-    // Login endpoint
     if (req.query.action === 'login') {
       try {
         const user = await User.findOne({ userName }).exec();

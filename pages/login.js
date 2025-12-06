@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { authenticateUser } from "@/lib/authenticate";
 import { useAtom } from "jotai";
@@ -13,48 +13,22 @@ export default function Login() {
   const [favouritesList, setFavouritesList] = useAtom(favouritesAtom);
   const router = useRouter();
 
-  useEffect(() => {
-    console.log("Login component mounted");
-    
-    const logs = JSON.parse(localStorage.getItem('login_logs') || '[]');
-    if (logs.length > 0) {
-      console.log("=== PREVIOUS LOGIN ATTEMPT LOGS ===");
-      logs.forEach(log => {
-        console.log(`[${log.time}] ${log.msg}`);
-      });
-      localStorage.removeItem('login_logs');
-    }
-  }, []);
-
   async function updateAtom() {
     try {
       const favourites = await getFavourites();
       setFavouritesList(favourites || []);
     } catch (err) {
-      console.warn("Failed to load favourites:", err);
       setFavouritesList([]); 
     }
   }
 
   async function handleSubmit(e) {
-    
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
     
-   
-    const log = (msg) => {
-      console.log(msg);
-      const logs = JSON.parse(localStorage.getItem('login_logs') || '[]');
-      logs.push({ time: new Date().toISOString(), msg });
-      localStorage.setItem('login_logs', JSON.stringify(logs.slice(-20))); 
-    };
-    
-    log("=== HANDLE SUBMIT CALLED ===");
-    
     if (loading) {
-      log("Already loading, preventing double submission");
       return false;
     }
     
@@ -62,50 +36,16 @@ export default function Login() {
     setLoading(true);
     
     if (!user || !password) {
-      log("Missing username or password");
       setWarning("Please enter both username and password");
       setLoading(false);
       return false;
     }
     
     try {
-      log(`Starting authentication for user: ${user}`);
-      
-      const token = await authenticateUser(user, password);
-      log("Authentication successful, token received");
-      
-   
-      let storedToken = localStorage.getItem("access_token");
-      if (!storedToken) {
-        throw new Error("Token was not saved to localStorage");
-      }
-      log("Token verified in localStorage");
-      
-      
-      window.dispatchEvent(new Event('auth-change'));
-      log("Auth-change event dispatched");
-      
-      
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
-      log("Loading favourites...");
-      try {
-        await updateAtom();
-        log("Favourites loaded");
-      } catch (favErr) {
-        log(`Warning: Failed to load favourites: ${favErr.message}`);
-        
-      }
-      
-      log("Redirecting to home page...");
-    
-      localStorage.removeItem('login_logs');
-      
+      await authenticateUser(user, password);
+      await updateAtom();
       window.location.href = "/";
     } catch (err) {
-      log(`ERROR: ${err.message}`);
-      log(`ERROR STACK: ${err.stack}`);
-      console.error("=== LOGIN ERROR ===", err);
       setWarning(err.message || JSON.stringify(err));
       setLoading(false);
       return false;
@@ -119,7 +59,6 @@ export default function Login() {
       <form 
         className="auth-form" 
         onSubmit={async (e) => {
-          console.log("Form onSubmit handler called!");
           e.preventDefault();
           e.stopPropagation();
           await handleSubmit(e);

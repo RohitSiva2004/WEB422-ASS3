@@ -12,17 +12,10 @@ export default function MainNav() {
   useEffect(() => {
     const checkAuth = () => {
       try {
-        const rawToken = typeof window !== 'undefined' ? localStorage.getItem("access_token") : null;
-        console.log("MainNav: Raw token from localStorage:", rawToken ? "exists" : "null");
-        
         const authToken = readToken();
-        console.log("MainNav: Checking auth, token:", authToken ? "exists" : "null");
-        console.log("MainNav: Username:", authToken?.userName);
-        console.log("MainNav: Full token object:", authToken);
         setToken(authToken);
         setUserName(authToken?.userName || null);
       } catch (err) {
-        console.error("MainNav: Error reading token:", err);
         setToken(null);
         setUserName(null);
       }
@@ -30,10 +23,7 @@ export default function MainNav() {
 
     checkAuth();
     
-    const timeoutId = setTimeout(checkAuth, 100);
-    
     const handleAuthChange = () => {
-      console.log("MainNav: auth-change event received");
       checkAuth();
     };
     
@@ -41,7 +31,6 @@ export default function MainNav() {
     
     const handleStorageChange = (e) => {
       if (e.key === 'access_token') {
-        console.log("MainNav: localStorage access_token changed");
         checkAuth();
       }
     };
@@ -49,17 +38,12 @@ export default function MainNav() {
     window.addEventListener('storage', handleStorageChange);
     
     const handleRouteChange = () => {
-      console.log("MainNav: Route changed, checking auth");
       checkAuth();
     };
     
     router.events?.on('routeChangeComplete', handleRouteChange);
     
-    const intervalId = setInterval(checkAuth, 1000);
-    
     return () => {
-      clearTimeout(timeoutId);
-      clearInterval(intervalId);
       window.removeEventListener('auth-change', handleAuthChange);
       window.removeEventListener('storage', handleStorageChange);
       router.events?.off('routeChangeComplete', handleRouteChange);
