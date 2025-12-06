@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { isAuthenticated } from '@/lib/authenticate';
 import { useAtom } from 'jotai';
@@ -11,9 +11,9 @@ export default function RouteGuard({ children }) {
   const router = useRouter();
   const [favouritesList, setFavouritesList] = useAtom(favouritesAtom);
 
-  async function updateAtom() {
+  const updateAtom = useCallback(async () => {
     setFavouritesList(await getFavourites());
-  }
+  }, [setFavouritesList]);
 
   useEffect(() => {
     const path = router.pathname;
@@ -23,7 +23,7 @@ export default function RouteGuard({ children }) {
     } else if (isAuthenticated()) {
       updateAtom(); 
     }
-  }, [router.pathname]);
+  }, [router, updateAtom]);
 
   return <>{children}</>;
 }

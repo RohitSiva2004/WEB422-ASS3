@@ -9,10 +9,10 @@ export default function About({ book }) {
         
         <div className="about-text">
           <p>
-            Passionate about building scalable, impactful solutions and contributing to teams that value clean code, innovation, and continuous improvement. Currently working as a junior software developer with hands-on experience in C, C++, Python, Java, JavaScript, TypeScript, HTML, CSS, and SQL. I bring a strong foundation in full-stack development, and I'm continuously expanding my skill set through real-world projects, academic challenges, and self-driven learning.
+            Passionate about building scalable, impactful solutions and contributing to teams that value clean code, innovation, and continuous improvement. Currently working as a junior software developer with hands-on experience in C, C++, Python, Java, JavaScript, TypeScript, HTML, CSS, and SQL. I bring a strong foundation in full-stack development, and I&apos;m continuously expanding my skill set through real-world projects, academic challenges, and self-driven learning.
           </p>
           <p>
-            While completing an Advanced Diploma in Computer Programming and Analysis at Seneca Polytechnic, I'm on track to further deepen my technical expertise by transitioning into McMaster University's Bachelor of Technology in Software Engineering Technology program. Already increasing efficiencies and reducing errors in systems for organizations- I plan to continue into a long and fruitful career for both myself and the teams I work with. My goal is to join a forward-thinking development team where I can grow, take on increasing responsibility, and help shape technologies that move industries forward.
+            While completing an Advanced Diploma in Computer Programming and Analysis at Seneca Polytechnic, I&apos;m on track to further deepen my technical expertise by transitioning into McMaster University&apos;s Bachelor of Technology in Software Engineering Technology program. Already increasing efficiencies and reducing errors in systems for organizations- I plan to continue into a long and fruitful career for both myself and the teams I work with. My goal is to join a forward-thinking development team where I can grow, take on increasing responsibility, and help shape technologies that move industries forward.
           </p>
         </div>
 
