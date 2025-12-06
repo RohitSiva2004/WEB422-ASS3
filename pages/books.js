@@ -54,17 +54,20 @@ export default function Books() {
           </tr>
         </thead>
         <tbody>
-          {pageData.docs.map((book, i) => (
-            <tr
-              key={`${book.key}-${i}`}
-              onClick={() => router.push(book.key)}
-              style={{ cursor: 'pointer' }}
-            >
-              <td>{book.title}</td>
-              <td>{(book.author_name || []).join(', ')}</td>
-              <td>{book.first_publish_year || 'N/A'}</td>
-            </tr>
-          ))}
+          {pageData.docs.map((book, i) => {
+            const workId = book.key ? book.key.replace('/works/', '') : null;
+            return (
+              <tr
+                key={`${book.key}-${i}`}
+                onClick={() => workId ? router.push(`/works/${workId}`) : null}
+                style={{ cursor: 'pointer' }}
+              >
+                <td>{book.title}</td>
+                <td>{(book.author_name || []).join(', ')}</td>
+                <td>{book.first_publish_year || 'N/A'}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </Table>
 
