@@ -5,6 +5,14 @@ import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
   try {
+    if (!process.env.MONGO_URL) {
+      return res.status(500).json({ message: 'Database configuration error: MONGO_URL not set' });
+    }
+    
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: 'Server configuration error: JWT_SECRET not set' });
+    }
+
     await connectDB();
 
     if (req.method === 'POST') {
@@ -29,7 +37,7 @@ export default async function handler(req, res) {
           if (err.code === 11000) {
             return res.status(422).json({ message: 'User Name already taken' });
           }
-          return res.status(422).json({ message: `Error creating user: ${err}` });
+          return res.status(422).json({ message: `Error creating user: ${err.message || err}` });
         }
       }
 
@@ -53,7 +61,7 @@ export default async function handler(req, res) {
           const token = jwt.sign(payload, process.env.JWT_SECRET);
           return res.status(200).json({ message: 'login successful', token });
         } catch (err) {
-          return res.status(422).json({ message: `Unable to find user: ${err}` });
+          return res.status(422).json({ message: `Unable to find user: ${err.message || err}` });
         }
       }
     }
@@ -61,7 +69,10 @@ export default async function handler(req, res) {
     res.setHeader('Allow', ['POST']);
     return res.status(405).json({ message: `Method ${req.method} not allowed` });
   } catch (err) {
-    return res.status(500).json({ message: 'Server error' });
+    if (err.message && err.message.includes('MONGO_URL')) {
+      return res.status(500).json({ message: 'Database configuration error: MONGO_URL not set' });
+    }
+    return res.status(500).json({ message: `Server error: ${err.message || 'Unknown error'}` });
   }
 }
 

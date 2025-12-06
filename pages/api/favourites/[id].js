@@ -19,6 +19,14 @@ function verifyToken(token) {
 
 export default async function handler(req, res) {
   try {
+    if (!process.env.MONGO_URL) {
+      return res.status(500).json({ message: 'Database configuration error: MONGO_URL not set' });
+    }
+    
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: 'Server configuration error: JWT_SECRET not set' });
+    }
+
     await connectDB();
 
     const token = getTokenFromRequest(req);
@@ -77,7 +85,10 @@ export default async function handler(req, res) {
     res.setHeader('Allow', ['PUT', 'DELETE']);
     return res.status(405).json({ message: `Method ${req.method} not allowed` });
   } catch (err) {
-    return res.status(500).json({ message: 'Server error' });
+    if (err.message && err.message.includes('MONGO_URL')) {
+      return res.status(500).json({ message: 'Database configuration error: MONGO_URL not set' });
+    }
+    return res.status(500).json({ message: `Server error: ${err.message || 'Unknown error'}` });
   }
 }
 
